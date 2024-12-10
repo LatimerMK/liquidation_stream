@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#
+# bash <(curl -s https://raw.githubusercontent.com/LatimerMK/liquidation_stream/main/install_stream.sh)
 
 curl -s https://raw.githubusercontent.com/LatimerMK/bash-install/refs/heads/main/tools/logo.sh | bash
 
