@@ -18,7 +18,7 @@ echo "Клонуємо репозиторій..."
 git clone https://github.com/LatimerMK/liquidation_stream.git
 
 # Перехід в каталог з проєктом
-cd liquidation_stream
+cd l_stream
 
 # Створення віртуального середовища
 echo "Створення віртуального середовища..."
@@ -31,7 +31,7 @@ pip install -r requirements.txt
 
 # Створення скрипта для запуску програми
 echo "Створення скрипта для запуску..."
-cat <<EOT > start_stream_liquidation.sh
+cat <<EOT > start.sh
 #!/bin/bash
 # Активуємо віртуальне середовище і запускаємо програму
 source ~/liquidation_stream/venv/bin/activate
@@ -39,7 +39,7 @@ python3 main.py
 EOT
 
 # Робимо start.sh виконуваним
-chmod +x start_stream_liquidation.sh
+chmod +x l_stream.sh
 
 # Підсумок
-echo "Установка завершена. Для запуску програми використовуйте './start_stream_liquidation.sh'."
+echo "Установка завершена. Для запуску програми використовуйте './start.sh'."
