@@ -55,12 +55,14 @@ def liquidationOrder(size, ignor_list):
 
     forceOrder()
 # -------------------------------------------------------------------
+# Завантаження конфігурації з файлу
+with open("config.json", "r") as file:
+    config = json.load(file)
 
-top_25_coin = ["BTCUSDT", "BTCUSDC", "ETHUSDT", "ETHUSDC", "BNBUSDT", "SOLUSDT", "XRPUSDT", "ADAUSDT", "DOGEUSDT", "1000SHIBUSDT",
-               "AVAXUSDT", "DOTUSDT", "TRXUSDT", "LINKUSDT", "MATICUSDT", "TONUSDT", "UNIUSDT", "BCHUSDT",
-               "ICPUSDT", "LTCUSDT", "ETCUSDT", "LEOUSDT", "APTUSDT", "FILUSDT", "ATOMUSDT", "OPUSDT",
-               "NEARUSDT"]
-top_10_coin = ["BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT", "XRPUSDT", "ADAUSDT", "DOGEUSDT", "1000SHIBUSDT",
-               "AVAXUSDT", "DOTUSDT"]
+# Використання параметрів
+top_25_coin = config["top_25_coin"]
+top_10_coin = config["top_10_coin"]
+liquidation_order_params = config["liquidation_order"]
 
-liquidationOrder(size=10000, ignor_list=top_25_coin)
+# Приклад використання
+liquidationOrder(size=liquidation_order_params["size"], ignor_list=top_25_coin)

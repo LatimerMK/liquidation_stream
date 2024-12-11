@@ -1,0 +1,16 @@
+{
+    "top_25_coin": [
+        "BTCUSDT", "BTCUSDC", "ETHUSDT", "ETHUSDC", "BNBUSDT", "SOLUSDT", "XRPUSDT", "ADAUSDT", "DOGEUSDT", "1000SHIBUSDT",
+        "AVAXUSDT", "DOTUSDT", "TRXUSDT", "LINKUSDT", "MATICUSDT", "TONUSDT", "UNIUSDT", "BCHUSDT",
+        "ICPUSDT", "LTCUSDT", "ETCUSDT", "LEOUSDT", "APTUSDT", "FILUSDT", "ATOMUSDT", "OPUSDT",
+        "NEARUSDT"
+    ],
+    "top_10_coin": [
+        "BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT", "XRPUSDT", "ADAUSDT", "DOGEUSDT", "1000SHIBUSDT",
+        "AVAXUSDT", "DOTUSDT"
+    ],
+    "liquidation_order": {
+        "size": 10000,
+        "ignor_list": "top_25_coin"
+    }
+}
