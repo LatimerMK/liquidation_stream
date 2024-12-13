@@ -18,7 +18,7 @@ echo "Клонуємо репозиторій..."
 git clone https://github.com/LatimerMK/liquidation_stream.git
 
 # Перехід в каталог з проєктом
-cd l_stream
+cd liquidation_stream
 
 # Створення віртуального середовища
 echo "Створення віртуального середовища..."
@@ -34,12 +34,12 @@ echo "Створення скрипта для запуску..."
 cat <<EOT > start.sh
 #!/bin/bash
 # Активуємо віртуальне середовище і запускаємо програму
-source ~/liquidation_stream/venv/bin/activate
+source venv/bin/activate
 python3 main.py
 EOT
 
 # Робимо start.sh виконуваним
-chmod +x l_stream.sh
+chmod +x start.sh
 
 # Підсумок
 echo "Налаштування config.json,"
