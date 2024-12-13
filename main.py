@@ -3,6 +3,7 @@ import websocket
 import json
 from datetime import datetime
 
+
 def liquidationOrder(size, ignor_list):
     print(f"Size: {size} $ \nIgnore: {ignor_list}")
     def forceOrder_msg(_wsa, data):

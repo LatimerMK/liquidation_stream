@@ -22,8 +22,9 @@ cd liquidation_stream
 
 # Створення віртуального середовища
 echo "Створення віртуального середовища..."
-python3 -m venv venv
-source venv/bin/activate
+mkdir .venv
+python3 -m venv .venv
+source .venv/bin/activate
 
 # Встановлення залежностей
 echo "Встановлення залежностей..."
@@ -34,7 +35,7 @@ echo "Створення скрипта для запуску..."
 cat <<EOT > start.sh
 #!/bin/bash
 # Активуємо віртуальне середовище і запускаємо програму
-source venv/bin/activate
+source ~/liquidation_stream/.venv/bin/activate
 python3 main.py
 EOT
 
