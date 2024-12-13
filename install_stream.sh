@@ -39,9 +39,32 @@ source ~/liquidation_stream/.venv/bin/activate
 python3 main.py
 EOT
 
+echo "Створення скрипта для запуску Tmux..."
+cat <<EOT > start_tmux.sh
+#!/bin/bash
+# Створення нової сесії tmux
+tmux new-session -d -s liq_stream
+
+# Запуск команд у tmux сесії
+tmux send-keys -t liq_stream "source ~/liquidation_stream/.venv/bin/activate" C-m
+tmux send-keys -t liq_stream "python3 main.py" C-m
+tmux send-keys -t echo "tmux new-session -d -s liq_stream"
+
+tmux send-keys -t liq_stream "echo 'Створення нової сесії: tmux new-session -d -s liq_stream'" C-m
+tmux send-keys -t liq_stream "echo 'Вхід в сесію: tmux attach -t liq_stream'" C-m
+tmux send-keys -t liq_stream "echo 'Щоб вийти з сесії Ctrl + b, потім d'" C-m
+tmux send-keys -t liq_stream "echo 'Закриття сесії з середини: exit'" C-m
+
+# Підключення до сесії для моніторингу
+tmux attach -t liq_stream
+EOT
+
 # Робимо start.sh виконуваним
 chmod +x start.sh
 
 # Підсумок
 echo "Налаштування config.json,"
-echo "Установка завершена. Для запуску програми використовуйте './start.sh'."
+echo "Установка завершена. Для запуску програми використовуйте './start.sh' './start_tmux.sh'."
+
+# на випадок проблем з бібліотеками AttributeError: module 'websocket' has no attribute 'WebSocketApp'
+# pip install --force-reinstall websocket-client
