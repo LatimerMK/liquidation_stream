@@ -5,12 +5,32 @@ from datetime import datetime
 import requests
 from dotenv import load_dotenv
 import os
+from datetime import datetime, timedelta
+from collections import deque
+
 
 # Завантажити змінні з .env
 load_dotenv()
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+# Зберігає кортежі (timestamp, value)
+liquidation_history = deque()
+
+
+def format_sum(val):
+    if val >= 1_000_000_000:
+        return f"{val / 1_000_000_000:.2f}kkk"
+    elif val >= 1_000_000:
+        return f"{val / 1_000_000:.2f}kk"
+    elif val >= 100_000:
+        return f"{val / 1_000:.0f}k"
+    elif val >= 10_000:
+        return f"{val / 1_000:.0f}k"
+    elif val >= 1_000:
+        return f"{val / 1_000:.0f}k"
+    else:
+        return f"{val:.0f}"
 
 def send_telegram_message(text):
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
@@ -64,44 +84,54 @@ def liquidationOrder(size, ignor_list):
         parsed_data = json.loads(data)
         #print(parsed_data)
 
+        val = float(parsed_data['o']['p']) * float(parsed_data['o']['q'])
+        now = datetime.utcnow()
+        # Додаємо нову ліквідацію
+        liquidation_history.append((now, val))
+        # Видаляємо старі записи старші за 1 годину
+        one_hour_ago = now - timedelta(hours=1)
+        while liquidation_history and liquidation_history[0][0] < one_hour_ago:
+            liquidation_history.popleft()
+        # Рахуємо суму за останню годину
+        hourly_sum = sum(v for t, v in liquidation_history)
+        #print(f"Сума ліквідацій за останню годину: {hourly_sum:,.0f} $")
+
+
         if parsed_data['o']['s'] not in ignor_list:
-            val = float(parsed_data['o']['p']) * float(parsed_data['o']['q'])
 
             if val > size:
                 timestamp = datetime.fromtimestamp(parsed_data['E'] / 1000.0)
                 timeLiq = timestamp.strftime("%H:%M:%S")
                 if parsed_data['o']['S'] == "BUY":
-                    side = "Liqd SHORT 🔴  "
-                else: side = "Liqd LONG  🟢  "
+                    side = "Liqd 🔴"
+                else: side = "Liqd 🟢"
 
                 formatted_val = "{:,.0f}".format(val)
                 formatted_symbol = parsed_data['o']['s']
                 if len(parsed_data['o']['s']) < 15:
                     formatted_symbol += (' ' * (15-len(parsed_data['o']['s'])))
 
-                print(f"{timeLiq}   -   {formatted_symbol}  {side}  {formatted_val} $ https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']}")
-                msg = (f"[{formatted_symbol}](https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']})  {side}  {formatted_val} $")
+                print(f"{timeLiq}   -   {formatted_symbol}  {side}  {formatted_val} $ https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']}  All 1H: {format_sum(hourly_sum)} $")
+                msg = (f"[{formatted_symbol}](https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']})  {side}  {formatted_val} $ All 1H: {format_sum(hourly_sum)} $")
                 add_to_buffer(msg)
 
 
-
         if parsed_data['o']['s'] in ignor_list:
-            val = float(parsed_data['o']['p']) * float(parsed_data['o']['q'])
 
             if val > size * 10:
                 timestamp = datetime.fromtimestamp(parsed_data['E'] / 1000.0)
                 timeLiq = timestamp.strftime("%H:%M:%S")
                 if parsed_data['o']['S'] == "BUY":
-                    side = "Liqd SHORT 🔴🔴"
+                    side = "Liqd 🔴🔴"
                 else:
-                    side = "Liqd LONG  🟢🟢"
+                    side = "Liqd 🟢🟢"
 
                 formatted_val = "{:,.0f}".format(val)
                 formatted_symbol = parsed_data['o']['s']
                 if len(parsed_data['o']['s']) < 15:
                     formatted_symbol += (' ' * (15-len(parsed_data['o']['s'])))
-                print( f"{timeLiq}  >>>  {formatted_symbol}  {side}  {formatted_val} $ https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']}")
-                msg = (f"[{formatted_symbol}](https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']})  {side}  {formatted_val} $")
+                print( f"{timeLiq}  >>>  {formatted_symbol}  {side}  {formatted_val} $ https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']}  All 1H: {format_sum(hourly_sum)} $")
+                msg = (f"[{formatted_symbol}](https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']})  {side}  {formatted_val} $ All 1H: {format_sum(hourly_sum)} $")
                 add_to_buffer(msg)
 
     def forceOrder():
@@ -112,7 +142,6 @@ def liquidationOrder(size, ignor_list):
         wsa = websocket.WebSocketApp(wss, on_message=forceOrder_msg)
         #websocket.enableTrace(True)
         wsa.run_forever()
-
     forceOrder()
 # -------------------------------------------------------------------
 # Завантаження конфігурації з файлу
