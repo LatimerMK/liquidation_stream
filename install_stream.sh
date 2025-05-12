@@ -30,6 +30,18 @@ source .venv/bin/activate
 echo "Встановлення залежностей..."
 pip install -r requirements.txt
 
+echo "Створення .env файлу..."
+cat <<EOT > .env
+# .env файл для Telegram бота
+
+# Ваш Telegram Bot Token
+TELEGRAM_BOT_TOKEN="your_bot_token_here"
+
+# Ваш Telegram Chat ID
+TELEGRAM_CHAT_ID="your_chat_id_here"
+EOT
+echo ".env файл створено! Заповніть його необхідними даними."
+
 # Створення скрипта для запуску програми
 echo "Створення скрипта для запуску..."
 cat <<EOT > start.sh
