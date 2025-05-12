@@ -111,8 +111,8 @@ def liquidationOrder(size, ignor_list):
                 if len(parsed_data['o']['s']) < 15:
                     formatted_symbol += (' ' * (15-len(parsed_data['o']['s'])))
 
-                print(f"{timeLiq}   -   {formatted_symbol}  {side}  {formatted_val} $ https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']}  All 1H: {format_sum(hourly_sum)} $")
-                msg = (f"[{formatted_symbol}](https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']})  {side}  {formatted_val} $ All 1H: {format_sum(hourly_sum)} $")
+                print(f"{timeLiq}   -   {formatted_symbol}  {side}  {formatted_val} $ https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']}  🚀 All 1H: {format_sum(hourly_sum)} $")
+                msg = (f"[{formatted_symbol}](https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']})  {side}  {formatted_val} $  🚀 All 1H: {format_sum(hourly_sum)} $")
                 add_to_buffer(msg)
 
 
@@ -130,8 +130,8 @@ def liquidationOrder(size, ignor_list):
                 formatted_symbol = parsed_data['o']['s']
                 if len(parsed_data['o']['s']) < 15:
                     formatted_symbol += (' ' * (15-len(parsed_data['o']['s'])))
-                print( f"{timeLiq}  >>>  {formatted_symbol}  {side}  {formatted_val} $ https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']}  All 1H: {format_sum(hourly_sum)} $")
-                msg = (f"[{formatted_symbol}](https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']})  {side}  {formatted_val} $ All 1H: {format_sum(hourly_sum)} $")
+                print( f"{timeLiq}  >>>  {formatted_symbol}  {side}  {formatted_val} $ https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']}  🚀 All 1H: {format_sum(hourly_sum)} $")
+                msg = (f"[{formatted_symbol}](https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']})  {side}  {formatted_val} $  🚀 All 1H: {format_sum(hourly_sum)} $")
                 add_to_buffer(msg)
 
     def forceOrder():
