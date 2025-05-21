@@ -1,3 +1,16 @@
-.venv
+__pycache__
 .idea
+.venv
+.venv
 .env
+log
+start.sh
+start_tmux.sh
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# PyCharm
+.idea/
