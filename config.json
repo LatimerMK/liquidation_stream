@@ -10,7 +10,7 @@
         "AVAXUSDT", "DOTUSDT"
     ],
     "liquidation_order": {
-        "size": 10000,
+        "size": 30000,
         "ignor_list": "top_25_coin"
     }
 }

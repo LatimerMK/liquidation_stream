@@ -7,7 +7,9 @@ from dotenv import load_dotenv
 import os
 from datetime import datetime, timedelta
 from collections import deque
-
+from binance_api import get_klines
+from chart_create import find_significant_levels, plot_candlestick_with_levels
+from alert_manager import send_alert
 
 # Завантажити змінні з .env
 load_dotenv()
@@ -95,9 +97,13 @@ def liquidationOrder(size, ignor_list):
         # Рахуємо суму за останню годину
         hourly_sum = sum(v for t, v in liquidation_history)
         #print(f"Сума ліквідацій за останню годину: {hourly_sum:,.0f} $")
-
+        symbol = parsed_data['o']['s']
+        INTERVAL = "5m"
+        LIMIT = 500
+        chart_path = f"charts/{symbol}.png"
 
         if parsed_data['o']['s'] not in ignor_list:
+
 
             if val > size:
                 timestamp = datetime.fromtimestamp(parsed_data['E'] / 1000.0)
@@ -113,14 +119,25 @@ def liquidationOrder(size, ignor_list):
 
                 print(f"{timeLiq}   -   {formatted_symbol}  {side}  {formatted_val} $ https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']}  🚀 All 1H: {format_sum(hourly_sum)} $")
                 msg = (f"[{formatted_symbol}](https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']})  {side}  {formatted_val} $  🚀 All 1H: {format_sum(hourly_sum)} $")
-                add_to_buffer(msg)
+                #add_to_buffer(msg)
                 ###########################################################################
                 msg = {
                     "link": f"<a href='https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']}'>{side}{formatted_symbol} </a>",
                     # f"[{color}{symbol}](https://www.coinglass.com/tv/Binance_{symbol})",
-                    "liqd_val": f"{formatted_val} $ ",
+                    "liqd_val": f"{side}  {formatted_val} $ ",
                     "all_liqd": f"🚀 All 1H: {format_sum(hourly_sum)} $"
                 }
+
+
+                df = get_klines(f"{symbol}", interval=INTERVAL, limit=LIMIT)
+                # current_price = df.iloc[-1]['close']
+                if len(df) < LIMIT * 0.5:
+                    return
+                levels, alines = find_significant_levels(df, order=25, min_diff_percent=1, max_crossings=2,
+                                                         lookback=5, )
+
+                plot_candlestick_with_levels(df, symbol, interval=INTERVAL, save_path=chart_path, alines=alines)
+                send_alert(symbol, msg, chart_path)
 
 
         if parsed_data['o']['s'] in ignor_list:
@@ -139,14 +156,24 @@ def liquidationOrder(size, ignor_list):
                     formatted_symbol += (' ' * (15-len(parsed_data['o']['s'])))
                 print( f"{timeLiq}  >>>  {formatted_symbol}  {side}  {formatted_val} $ https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']}  🚀 All 1H: {format_sum(hourly_sum)} $")
                 msg = (f"[{formatted_symbol}](https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']})  {side}  {formatted_val} $  🚀 All 1H: {format_sum(hourly_sum)} $")
-                add_to_buffer(msg)
+                #add_to_buffer(msg)
                 ###########################################################################
                 msg = {
-                    "link": f"<a href='https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']}'>{side}{formatted_symbol} </a>",
+                    "link": f"<a href='https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']}'>{formatted_symbol} </a>",
                     # f"[{color}{symbol}](https://www.coinglass.com/tv/Binance_{symbol})",
-                    "liqd_val": f"{formatted_val} $ ",
+                    "liqd_val": f"{side} {formatted_val} $ ",
                     "all_liqd": f"🚀 All 1H: {format_sum(hourly_sum)} $"
                 }
+
+                df = get_klines(f"{symbol}", interval=INTERVAL, limit=LIMIT)
+                # current_price = df.iloc[-1]['close']
+                if len(df) < LIMIT * 0.5:
+                    return
+                levels, alines = find_significant_levels(df, order=25, min_diff_percent=1, max_crossings=2,
+                                                         lookback=5, )
+
+                plot_candlestick_with_levels(df, symbol, interval=INTERVAL, save_path=chart_path, alines=alines)
+                send_alert(symbol, msg, chart_path)
 
 
     def forceOrder():
@@ -157,6 +184,7 @@ def liquidationOrder(size, ignor_list):
         wsa = websocket.WebSocketApp(wss, on_message=forceOrder_msg)
         #websocket.enableTrace(True)
         wsa.run_forever()
+
     forceOrder()
 # -------------------------------------------------------------------
 # Завантаження конфігурації з файлу

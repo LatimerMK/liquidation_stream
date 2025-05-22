@@ -126,6 +126,7 @@ def plot_candlestick_with_levels(df, symbol, interval, alines, save_path: str = 
     )
 
 
+
 if __name__ == '__main__':
     symbol = "SUIUSDT"
     chart_path = f"charts/{symbol}.png"

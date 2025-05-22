@@ -4,6 +4,7 @@ from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 
 def send_telegram_message(text: str):
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+
     payload = {
         "chat_id": TELEGRAM_CHAT_ID,
         "text": text,
@@ -15,6 +16,7 @@ def send_telegram_message(text: str):
 
 def send_telegram_photo(photo_path: str, caption: str = ""):
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto"
+
     with open(photo_path, "rb") as photo_file:
         files = {"photo": photo_file}
         data = {
@@ -23,4 +25,5 @@ def send_telegram_photo(photo_path: str, caption: str = ""):
             "parse_mode": "HTML"
         }
         response = requests.post(url, files=files, data=data)
+
         response.raise_for_status()
