@@ -122,7 +122,7 @@ def liquidationOrder(size, ignor_list):
                 #add_to_buffer(msg)
                 ###########################################################################
                 msg = {
-                    "link": f"<a href='https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']}'>{side}{formatted_symbol} </a>",
+                    "link": f"<a href='https://www.coinglass.com/tv/Binance_{parsed_data['o']['s']}'>{formatted_symbol} </a>",
                     # f"[{color}{symbol}](https://www.coinglass.com/tv/Binance_{symbol})",
                     "liqd_val": f"{side}  {formatted_val} $ ",
                     "all_liqd": f"🚀 All 1H: {format_sum(hourly_sum)} $"
